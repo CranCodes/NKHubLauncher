@@ -1,92 +1,166 @@
--- Gui to Lua
--- Version: 3.2
 
--- Instances:
+--// UNIVERSAL GAME LOADER
+--// Automatically detects game and displays loading UI
 
-local JJS = Instance.new("ScreenGui")
-local Main = Instance.new("Frame")
-local TextLabel = Instance.new("TextLabel")
-local TextLabel_2 = Instance.new("TextLabel")
-local CloseButton = Instance.new("TextButton")
-local UICorner = Instance.new("UICorner")
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local MarketplaceService = game:GetService("MarketplaceService")
 
---Properties:
+local Player = Players.LocalPlayer
 
-JJS.Name = "JJS"
-JJS.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-JJS.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+--// GAME SCRIPTS
+-- Replace these IDs and URLs with your own
+local GameScripts = {
+    [120219252362013] = "https://raw.githubusercontent.com/CranCodes/nkhubs/refs/heads/main/TFFA.lua",
+    [75108253383447] = "https://raw.githubusercontent.com/CranCodes/nkhubs/refs/heads/main/PSAC.lua",
+    [125677257801200] = "https://raw.githubusercontent.com/CranCodes/nkhubs/refs/heads/main/NSS.lua"
+}
 
-Main.Name = "Main"
-Main.Parent = JJS
-Main.BackgroundColor3 = Color3.fromRGB(21, 20, 27)
-Main.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Main.BorderSizePixel = 0
-Main.Position = UDim2.new(0.45045045, 0, 0.207720593, 0)
-Main.Size = UDim2.new(0, 251, 0, 115)
+--// DETECT GAME
+local GameId = game.PlaceId
+local ScriptURL = GameScripts[GameId]
 
-TextLabel.Parent = Main
-TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-TextLabel.BackgroundTransparency = 1.000
-TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
-TextLabel.BorderSizePixel = 0
-TextLabel.Position = UDim2.new(0.0979276225, 0, 0.467513382, 0)
-TextLabel.Size = UDim2.new(0, 200, 0, 50)
-TextLabel.Font = Enum.Font.SourceSans
-TextLabel.Text = "getting GameID close the loader when script loads"
-TextLabel.TextColor3 = Color3.fromRGB(205, 255, 255)
-TextLabel.TextScaled = true
-TextLabel.TextSize = 14.000
-TextLabel.TextWrapped = true
+--// GET GAME NAME
+local GameName = "Unknown Game"
 
-TextLabel_2.Parent = Main
-TextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-TextLabel_2.BackgroundTransparency = 1.000
-TextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-TextLabel_2.BorderSizePixel = 0
-TextLabel_2.Position = UDim2.new(0.046134796, 0, 0.0588177219, 0)
-TextLabel_2.Size = UDim2.new(0, 122, 0, 27)
-TextLabel_2.Font = Enum.Font.SourceSans
-TextLabel_2.Text = "NK Hub Loader V1"
-TextLabel_2.TextColor3 = Color3.fromRGB(205, 255, 255)
-TextLabel_2.TextScaled = true
-TextLabel_2.TextSize = 14.000
-TextLabel_2.TextWrapped = true
-TextLabel_2.TextXAlignment = Enum.TextXAlignment.Left
+pcall(function()
+    local Info = MarketplaceService:GetProductInfo(GameId)
+    GameName = Info.Name
+end)
 
-CloseButton.Name = "CloseButton"
-CloseButton.Parent = Main
-CloseButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-CloseButton.BackgroundTransparency = 1.000
-CloseButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-CloseButton.BorderSizePixel = 0
-CloseButton.Position = UDim2.new(0.892430305, 0, 0, 0)
-CloseButton.Size = UDim2.new(0, 19, 0, 27)
-CloseButton.Font = Enum.Font.SourceSans
-CloseButton.Text = "X"
-CloseButton.TextColor3 = Color3.fromRGB(205, 255, 255)
-CloseButton.TextScaled = true
-CloseButton.TextSize = 14.000
-CloseButton.TextStrokeColor3 = Color3.fromRGB(255, 0, 4)
-CloseButton.TextStrokeTransparency = 0.000
-CloseButton.TextWrapped = true
+--// CREATE GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "UniversalLoader"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.IgnoreGuiInset = true
 
-UICorner.Parent = Main
+-- Compatible with common executor environments
+local ParentGui = Player:WaitForChild("PlayerGui")
 
--- Scripts:
-
-local function ZTHNBBT_fake_script() -- JJS.LocalScript 
-	local script = Instance.new('LocalScript', JJS)
-
-	-- Place IDs
-	local GardenHorizons = "130594398886540"
-	local GBFBR = "71827913900569"
-	
-	
-	wait(3)
-	if game.PlaceId == GardenHorizons then
-		loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/wambadamNKHub/NKHubLauncher/refs/heads/main/HorizonsHub"))()
-	elseif game.PlaceId == GBFBR then
-		loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/wambadamNKHub/NKHubLauncher/refs/heads/main/GBFBR.lua"))()
-	end
+if type(gethui) == "function" then
+    local success, result = pcall(gethui)
+    if success and result then
+        ParentGui = result
+    end
 end
-coroutine.wrap(ZTHNBBT_fake_script)()
+
+ScreenGui.Parent = ParentGui
+
+--// MAIN FRAME
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 300, 0, 90)
+Frame.Position = UDim2.new(0.5, -150, 0.5, -45)
+Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+Frame.BackgroundTransparency = 1
+Frame.BorderSizePixel = 0
+Frame.Parent = ScreenGui
+
+local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(0, 12)
+Corner.Parent = Frame
+
+local Stroke = Instance.new("UIStroke")
+Stroke.Color = Color3.fromRGB(100, 100, 255)
+Stroke.Thickness = 1.5
+Stroke.Parent = Frame
+
+--// LOADING TEXT
+local LoadingText = Instance.new("TextLabel")
+LoadingText.Size = UDim2.new(1, -20, 0, 45)
+LoadingText.Position = UDim2.new(0, 10, 0, 10)
+LoadingText.BackgroundTransparency = 1
+LoadingText.Text = "Loading " .. GameName .. "..."
+LoadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
+LoadingText.TextSize = 17
+LoadingText.Font = Enum.Font.GothamBold
+LoadingText.TextScaled = true
+LoadingText.TextWrapped = true
+LoadingText.Parent = Frame
+
+local TextLimit = Instance.new("UITextSizeConstraint")
+TextLimit.MaxTextSize = 17
+TextLimit.Parent = LoadingText
+
+--// LOADING BAR BACKGROUND
+local BarBackground = Instance.new("Frame")
+BarBackground.Size = UDim2.new(0.85, 0, 0, 5)
+BarBackground.Position = UDim2.new(0.075, 0, 0.78, 0)
+BarBackground.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+BarBackground.BorderSizePixel = 0
+BarBackground.Parent = Frame
+
+local BarCorner = Instance.new("UICorner")
+BarCorner.CornerRadius = UDim.new(1, 0)
+BarCorner.Parent = BarBackground
+
+--// LOADING BAR
+local LoadingBar = Instance.new("Frame")
+LoadingBar.Size = UDim2.new(0, 0, 1, 0)
+LoadingBar.BackgroundColor3 = Color3.fromRGB(100, 100, 255)
+LoadingBar.BorderSizePixel = 0
+LoadingBar.Parent = BarBackground
+
+local LoadingCorner = Instance.new("UICorner")
+LoadingCorner.CornerRadius = UDim.new(1, 0)
+LoadingCorner.Parent = LoadingBar
+
+--// FADE IN
+TweenService:Create(
+    Frame,
+    TweenInfo.new(0.4),
+    {BackgroundTransparency = 0}
+):Play()
+
+--// LOADING ANIMATION
+local Running = true
+
+task.spawn(function()
+    while Running do
+        LoadingBar.Size = UDim2.new(0, 0, 1, 0)
+
+        local Tween = TweenService:Create(
+            LoadingBar,
+            TweenInfo.new(1.5, Enum.EasingStyle.Linear),
+            {Size = UDim2.new(1, 0, 1, 0)}
+        )
+
+        Tween:Play()
+        Tween.Completed:Wait()
+    end
+end)
+
+--// EXECUTE GAME SCRIPT
+task.wait(0.8)
+
+if ScriptURL then
+    local Success, Error = pcall(function()
+        loadstring(game:HttpGet(ScriptURL))()
+    end)
+
+    if Success then
+        LoadingText.Text = "Loaded " .. GameName .. "!"
+        LoadingText.TextColor3 = Color3.fromRGB(100, 255, 150)
+    else
+        LoadingText.Text = "Failed to load!"
+        LoadingText.TextColor3 = Color3.fromRGB(255, 100, 100)
+        warn(Error)
+    end
+else
+    LoadingText.Text = "Game not supported!"
+    LoadingText.TextColor3 = Color3.fromRGB(255, 100, 100)
+end
+
+--// FINISH LOADING
+Running = false
+LoadingBar.Size = UDim2.new(1, 0, 1, 0)
+
+task.wait(1.5)
+
+TweenService:Create(
+    Frame,
+    TweenInfo.new(0.4),
+    {BackgroundTransparency = 1}
+):Play()
+
+task.wait(0.4)
+ScreenGui:Destroy()
