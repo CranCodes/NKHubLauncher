@@ -12,7 +12,7 @@ local Player = Players.LocalPlayer
 -- Replace these IDs and URLs with your own
 local GameScripts = {
     [120219252362013] = "https://raw.githubusercontent.com/CranCodes/nkhubs/refs/heads/main/TFFA.lua",
-    [75108253383447] = "https://raw.githubusercontent.com/CranCodes/nkhubs/refs/heads/main/PSAC.lua",
+    [75108253383447] = "https://raw.githubusercontent.com/CranCodes/NKHubLauncher/refs/heads/main/Launcher.lua",
     [125677257801200] = "https://raw.githubusercontent.com/CranCodes/nkhubs/refs/heads/main/NSS.lua"
 }
 
