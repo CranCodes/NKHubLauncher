@@ -13,7 +13,8 @@ local Player = Players.LocalPlayer
 local GameScripts = {
     [120219252362013] = "https://raw.githubusercontent.com/CranCodes/nkhubs/refs/heads/main/TFFA.lua",
     [75108253383447] = "https://raw.githubusercontent.com/CranCodes/NKHubLauncher/refs/heads/main/Launcher.lua",
-    [125677257801200] = "https://raw.githubusercontent.com/CranCodes/nkhubs/refs/heads/main/NSS.lua"
+    [125677257801200] = "https://raw.githubusercontent.com/CranCodes/nkhubs/refs/heads/main/NSS.lua",
+    [115080437808566] = "https://raw.githubusercontent.com/CranCodes/nkhubs/refs/heads/main/CAGT.lua"
 }
 
 --// DETECT GAME
